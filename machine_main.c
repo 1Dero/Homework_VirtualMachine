@@ -16,14 +16,14 @@ void load_into_memory(BOFFILE bf) {
     text_words = header.text_length;
     data_words = header.data_length;
 
-    reg.PC = header.text_start_address;
+    reg.PC = 0;
     reg.general[GP] = header.data_start_address;
     reg.general[SP] = header.stack_bottom_addr;
     reg.general[FP] = reg.general[SP];
     for(int pc = reg.PC; pc < text_words; pc++) { 
         mem.instrs[pc] = instruction_read(bf);
     }
-    for(int gp = GP; gp < header.data_length; gp++) {
+    for(int gp = reg.general[GP]; gp < (reg.general[GP]+header.data_length); gp++) {
         mem.words[gp] = bof_read_word(bf);
     }
 }
