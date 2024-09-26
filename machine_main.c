@@ -5,6 +5,9 @@
 #include <string.h>
 #include "machine.h"
 
+// Global Variables declaration
+mem_u mem;
+registers reg;
 word_type text_words;
 word_type data_words;
 
@@ -33,17 +36,14 @@ int main(int argc, char *argv[]) {
         bf = bof_read_open(argv[2]);
         load_into_memory(bf);
 
-        for(reg.PC; reg.PC < text_words; reg.PC++) {
-            print_instruction(mem.instrs[reg.PC]);
-        }
+        print_instructions();
     }
     else {
         // Execute instructions in .bof file.
         bf = bof_read_open(argv[1]);
-        
-        for(reg.PC; reg.PC < text_words; reg.PC++) {
-            execute_instruction(mem.instrs[reg.PC]);
-        }
+        load_into_memory(bf);
+
+        execute_instructions();
     }
 
 

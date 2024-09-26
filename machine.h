@@ -16,13 +16,13 @@
 #define FP 2
 #define RA 7
 
-static union mem_u {
+typedef union mem_u {
     word_type words[MEMORY_SIZE_IN_WORDS];
     uword_type uwords[MEMORY_SIZE_IN_WORDS];
     bin_instr_t instrs[MEMORY_SIZE_IN_WORDS];
-} mem;
+}mem_u;
 
-static struct registers {
+typedef struct registers {
     // General registers
     word_type general[REGISTER_SIZE];
 
@@ -30,7 +30,11 @@ static struct registers {
     word_type PC;
     word_type HI;
     word_type LO;
-} reg;
+}registers;
+
+// mem_u and registers global variables
+extern mem_u mem;
+extern registers reg;
 
 // Number of words in text and data sections for the bof file.
 extern word_type text_words;
@@ -48,9 +52,9 @@ Address Instruction
     2: EXIT 0
     1024: 0         ...
 */
-void print_instruction(bin_instr_t intruction);
+void print_instructions();
 
 // Takes an instruction and does what it says
-void execute_instruction(bin_instr_t instruction);
+void execute_instructions();
 
 #endif
