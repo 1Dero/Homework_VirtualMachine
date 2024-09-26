@@ -10,10 +10,16 @@ Global Variables that can be used in this file:
     word_type data_words;
 */
 
-void print_instructions() {
-    for(reg.PC; reg.PC < text_words; reg.PC++) {
-        printf("%s\n", instruction_mnemonic(mem.instrs[reg.PC]));
+void print_in_assembly() {
+    for(int pc = reg.PC; pc < text_words; pc++) {
+        printf("    %2d: %s\n", pc, instruction_assembly_form(pc, mem.instrs[pc]));
     }
+    
+    for(int i = 0; i <= data_words; i++) {
+        printf("    %4d: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
+        if((i+1)%5 == 0) printf("\n");
+    }
+    printf("    ...\n");
 }
 
 void execute_instructions() {

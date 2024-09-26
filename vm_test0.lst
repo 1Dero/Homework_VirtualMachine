@@ -1,5 +1,0 @@
-Address Instruction
-     0: STRA 
-     1: ADDI $sp, -1, 2
-     2: EXIT 0
-    1024: 0	        ...     

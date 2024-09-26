@@ -52,7 +52,7 @@ Address Instruction
     2: EXIT 0
     1024: 0         ...
 */
-void print_instructions();
+void print_in_assembly();
 
 // Takes an instruction and does what it says
 void execute_instructions();

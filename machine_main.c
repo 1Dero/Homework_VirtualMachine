@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
         bf = bof_read_open(argv[2]);
         load_into_memory(bf);
 
-        print_instructions();
+        print_in_assembly();
     }
     else {
         // Execute instructions in .bof file.
