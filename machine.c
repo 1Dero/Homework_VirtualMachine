@@ -36,7 +36,7 @@ int execute_instructions() {
 
         // Fetch intruction
         bin_instr_t instruct = mem.instrs[reg.PC];
-        if(doTraceOutput) printf("==>      %d: %s\n", reg.PC, instruction_assembly_form(reg.PC, instruct));
+        if(doTraceOutput) printf("==>%8u: %s\n", reg.PC, instruction_assembly_form(reg.PC, instruct));
 
         // Update PC
         reg.PC += 1;
@@ -117,7 +117,7 @@ void printTraceOutput() {
     }
     printf("\n");
     for(int i = 0; i <= data_words; i++) {
-        printf("    %4d: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
+        printf("%8u: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
         if((i+1)%5 == 0) printf("\n");
     }
     printf("        ...\n");
@@ -126,7 +126,7 @@ void printTraceOutput() {
             printf("        ...");
             while(mem.words[i] == 0) i++;
         }
-        printf("    %4d: %d\t", i, mem.words[i]);
+        printf("%8u: %d\t", i, mem.words[i]);
         if((i+1)%5 == 0) printf("\n");
     }
     printf("\n\n");
