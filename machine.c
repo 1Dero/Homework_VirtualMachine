@@ -144,11 +144,10 @@ int doSystemCalls(syscall_instr_t instruct) {
             exit(instruct.offset);
         }
         case print_str_sc: {
-            printf("%s", &mem.words[reg.general[instruct.reg+instruct.offset]]);
+            printf("%s", &mem.words[reg.general[instruct.reg]+instruct.offset]);
             break;
         }
         case print_char_sc: {
-            //printf("Called %s\n", instruction_assembly_form(reg.PC-1, (bin_instr_t) instruct));
             fputc(mem.words[reg.general[instruct.reg]+instruct.offset], stdout);
             break;
         }
