@@ -68,6 +68,5 @@ int doSystemCalls(syscall_instr_t instruct);
 int doOtherComputation(other_comp_instr_t instruct);
 int doImmediate(immed_instr_t instruct);
 int doJump(jump_instr_t instruct);
-int doError(error_instr_t instruct);
 
 #endif

@@ -21,7 +21,7 @@ void print_in_assembly() {
     printf("    ...\n");
 }
 
-doTraceOutput = 0;
+int doTraceOutput = 0;
 
 int execute_instructions() {
     for(; reg.PC < text_words; reg.PC++) {
@@ -30,36 +30,36 @@ int execute_instructions() {
             if(doTraceOutput) printTraceOutput();
 
             case comp_instr_type: {
-                doComputational(instruct);
+                doComputational(instruct.comp);
                 break;
             }
             case syscall_instr_type: {
-                doSystemCalls(instruct);
+                doSystemCalls(instruct.syscall);
                 break;
             }
             case other_comp_instr_type: {
-                doOtherComputation(instruct);
+                doOtherComputation(instruct.othc);
                 break;
             }
             case immed_instr_type: {
-                doImmediate(instruct);
+                doImmediate(instruct.immed);
                 break;
             }
             case jump_instr_type: {
-                doJump(instruct);
+                doJump(instruct.jump);
                 break;
             }
             case error_instr_type: {
-                doError(instruct);
-                break
+                printf("Error instruction type");
+                return 1;
             }
             default: {
                 printf("Not a valid instruction.\n");
                 return 1;
             }
         }
-    return 0;
     }
+    return 0;
 }
 
 void printTraceOutput() {
@@ -68,19 +68,21 @@ void printTraceOutput() {
 
 int doComputational(comp_instr_t instruct) {
 
+    return 0;
 }
 int doSystemCalls(syscall_instr_t instruct) {
 
+    return 0;
 }
 int doOtherComputation(other_comp_instr_t instruct) {
 
+    return 0;
 }
 int doImmediate(immed_instr_t instruct) {
 
+    return 0;
 }
 int doJump(jump_instr_t instruct) {
 
-}
-int doError(error_instr_t instruct) {
-
+    return 0;
 }
