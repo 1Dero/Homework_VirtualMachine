@@ -10,12 +10,14 @@
 */
 
 void print_in_assembly() {
+    instruction_print_table_heading(stdout);
+
     for(int pc = reg.PC; pc < text_words; pc++) {
-        printf("    %2d: %s\n", pc, instruction_assembly_form(pc, mem.instrs[pc]));
+        instruction_print(stdout, pc, mem.instrs[pc]);
     }
     
     for(int i = 0; i <= data_words; i++) {
-        printf("    %4d: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
+        printf("%8u: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
         if((i+1)%5 == 0) printf("\n");
     }
     printf("        ...\n");
@@ -62,7 +64,7 @@ int execute_instructions() {
                 break;
             }
             case error_instr_type: {
-                printf("Error instruction type");
+                printf("Error instruction type\n");
                 exit(EXIT_FAILURE);
             }
             default: {
@@ -70,9 +72,10 @@ int execute_instructions() {
                 exit(EXIT_FAILURE);
             }
         }
-        if(doTraceOutput) printTraceOutput();
+        if(doTraceOutput) {
+            printTraceOutput();
+        }
     }
-    printf("outside loop\n");
     return 0;
 }
 
@@ -119,7 +122,7 @@ void printTraceOutput() {
     }
     printf("        ...\n");
     for(int i = reg.general[SP]; i <= reg.general[FP]; i++) {
-        if(i != reg.general[SP] && mem.words[i] == 0 && mem.words[i-1] ==0) {
+        if(i != reg.general[SP] && mem.words[i] == 0 && mem.words[i-1] == 0) {
             printf("        ...");
             while(mem.words[i] == 0) i++;
         }
@@ -137,18 +140,20 @@ int doComputational(comp_instr_t instruct) {
 int doSystemCalls(syscall_instr_t instruct) {
     switch(instruct.code) {
         case exit_sc: {
+            printf("\n");
             exit(instruct.offset);
         }
         case print_str_sc: {
-
+            printf("%s", &mem.words[reg.general[instruct.reg+instruct.offset]]);
             break;
         }
         case print_char_sc: {
-
+            //printf("Called %s\n", instruction_assembly_form(reg.PC-1, (bin_instr_t) instruct));
+            fputc(mem.words[reg.general[instruct.reg+instruct.offset]], stdout);
             break;
         }
         case read_char_sc: {
-
+            mem.words[reg.general[instruct.reg+instruct.offset]] = getc(stdin);
             break;
         }
         case start_tracing_sc: {

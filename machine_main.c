@@ -29,7 +29,6 @@ int main(int argc, char *argv[]) {
     BOFFILE bf;
     if(strcmp("-p", argv[1]) == 0) {
         // Load the .bof file and print what's in it, then exit.
-        printf("Address Instruction\n");
         bf = bof_read_open(argv[2]);
         load_into_memory(bf);
 
