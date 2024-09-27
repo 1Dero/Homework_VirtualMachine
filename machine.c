@@ -22,6 +22,39 @@ void print_in_assembly() {
     printf("    ...\n");
 }
 
-void execute_instructions() {
-
+int execute_instructions() {
+    for(; reg.PC < text_words; reg.PC++) {
+        bin_instr_t instruct = mem.instrs[reg.PC];
+        switch(instruction_type(instruct)) {
+            case comp_instr_type: {
+                // printf("comp_instr_t\n");
+                break;
+            }
+            case syscall_instr_type: {
+                // printf("syscall_instr_type\n");
+                break;
+            }
+            case other_comp_instr_type: {
+                // printf("other_comp_instr_type\n");
+                break;
+            }
+            case immed_instr_type: {
+                // printf("immed_instr_type\n");
+                break;
+            }
+            case jump_instr_type: {
+                // printf("jump_instr_type\n");
+                break;
+            }
+            case error_instr_type: {
+                // printf("error_instr_type\n");
+                break;
+            }
+            default: {
+                printf("Not a valid instruction.\n");
+                return 1;
+            }
+        }
+    return 0;
+    }
 }

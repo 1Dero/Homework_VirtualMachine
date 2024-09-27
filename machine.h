@@ -55,6 +55,6 @@ Address Instruction
 void print_in_assembly();
 
 // Takes an instruction and does what it says
-void execute_instructions();
+int execute_instructions();
 
 #endif

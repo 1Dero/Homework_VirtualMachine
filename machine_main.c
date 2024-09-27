@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         bf = bof_read_open(argv[1]);
         load_into_memory(bf);
 
-        execute_instructions();
+        if(execute_instructions()) return EXIT_FAILURE;
     }
 
 
