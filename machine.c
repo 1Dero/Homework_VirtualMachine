@@ -63,10 +63,12 @@ int execute_instructions() {
 }
 
 void printTraceOutput() {
-
+    // Darel
+    
 }
 
 int doComputational(comp_instr_t instruct) {
+    // Ryan
 
     return 0;
 }
@@ -79,6 +81,7 @@ int doOtherComputation(other_comp_instr_t instruct) {
     return 0;
 }
 int doImmediate(immed_instr_t instruct) {
+    // Elijah
 
     return 0;
 }
