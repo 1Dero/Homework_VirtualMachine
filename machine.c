@@ -32,7 +32,7 @@ int execute_instructions() {
     for(int i=0; i < text_words; i++) {
         // Invariants check
         int retVal = checkInvariants();
-        if (retVal == 1) return retVal;
+        if (retVal == 1) exit(retVal);
 
         // Fetch intruction
         bin_instr_t instruct = mem.instrs[reg.PC];
