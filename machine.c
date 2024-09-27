@@ -149,11 +149,11 @@ int doSystemCalls(syscall_instr_t instruct) {
         }
         case print_char_sc: {
             //printf("Called %s\n", instruction_assembly_form(reg.PC-1, (bin_instr_t) instruct));
-            fputc(mem.words[reg.general[instruct.reg+instruct.offset]], stdout);
+            fputc(mem.words[reg.general[instruct.reg]+instruct.offset], stdout);
             break;
         }
         case read_char_sc: {
-            mem.words[reg.general[instruct.reg+instruct.offset]] = getc(stdin);
+            mem.words[reg.general[instruct.reg]+instruct.offset] = getc(stdin);
             break;
         }
         case start_tracing_sc: {
