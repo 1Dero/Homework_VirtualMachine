@@ -18,17 +18,29 @@ void print_in_assembly() {
         printf("    %4d: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
         if((i+1)%5 == 0) printf("\n");
     }
-    printf("    ...\n");
+    printf("        ...\n");
 }
 
-int doTraceOutput = 0;
+// Default: starts at true
+int doTraceOutput = 1; 
 
+// Returns 1 for Halt condition, and 0 otherwise.
 int execute_instructions() {
-    for(; reg.PC < text_words; reg.PC++) {
-        bin_instr_t instruct = mem.instrs[reg.PC];
-        switch(instruction_type(instruct)) {
-            if(doTraceOutput) printTraceOutput();
+    printTraceOutput();
+    for(int i=0; i < text_words; i++) {
+        // Invariants check
+        int retVal = checkInvariants();
+        if (retVal == 1) return retVal;
 
+        // Fetch intruction
+        bin_instr_t instruct = mem.instrs[reg.PC];
+        if(doTraceOutput) printf("==>      %d: %s\n", reg.PC, instruction_assembly_form(reg.PC, instruct));
+
+        // Update PC
+        reg.PC += 1;
+
+        // Execute Instruction
+        switch(instruction_type(instruct)) {
             case comp_instr_type: {
                 doComputational(instruct.comp);
                 break;
@@ -51,20 +63,70 @@ int execute_instructions() {
             }
             case error_instr_type: {
                 printf("Error instruction type");
-                return 1;
+                exit(EXIT_FAILURE);
             }
             default: {
                 printf("Not a valid instruction.\n");
-                return 1;
+                exit(EXIT_FAILURE);
             }
         }
+        if(doTraceOutput) printTraceOutput();
+    }
+    printf("outside loop\n");
+    return 0;
+}
+
+int checkInvariants() {
+    if (!(0 <= reg.general[GP]))
+    {
+        printf("$gp negative\n");
+        return 1;
+    }
+    if (!(reg.general[GP] < reg.general[SP]))
+    {
+        printf("$gp not less than $sp\n");
+        return 1;
+    }
+    if (!(reg.general[SP] <= reg.general[FP]))
+    {
+        printf("$sp not less than or equal to $fp\n");
+        return 1;
+    }
+    if (!(reg.general[FP] < MEMORY_SIZE_IN_WORDS))
+    {
+        printf("$fp not less than MEMORY_SIZE_IN_WORDS\n");
+        return 1;
+    }
+    if (!(0 <= reg.PC && reg.PC < MEMORY_SIZE_IN_WORDS))
+    {
+        printf("Invalid PC: %d\n", reg.PC);
+        return 1;
     }
     return 0;
 }
 
 void printTraceOutput() {
     // Darel
-    
+    printf("      PC: %d\n", reg.PC);
+    for(int i = 0; i < NUM_REGISTERS; i++) {
+        printf("GPR[%s]: %-4d \t", regname_get(i), reg.general[i]);
+        if((i+1)%5 == 0) printf("\n");
+    }
+    printf("\n");
+    for(int i = 0; i <= data_words; i++) {
+        printf("    %4d: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
+        if((i+1)%5 == 0) printf("\n");
+    }
+    printf("        ...\n");
+    for(int i = reg.general[SP]; i <= reg.general[FP]; i++) {
+        if(i != reg.general[SP] && mem.words[i] == 0 && mem.words[i-1] ==0) {
+            printf("        ...");
+            while(mem.words[i] == 0) i++;
+        }
+        printf("    %4d: %d\t", i, mem.words[i]);
+        if((i+1)%5 == 0) printf("\n");
+    }
+    printf("\n\n");
 }
 
 int doComputational(comp_instr_t instruct) {
@@ -73,6 +135,35 @@ int doComputational(comp_instr_t instruct) {
     return 0;
 }
 int doSystemCalls(syscall_instr_t instruct) {
+    switch(instruct.code) {
+        case exit_sc: {
+            exit(instruct.offset);
+        }
+        case print_str_sc: {
+
+            break;
+        }
+        case print_char_sc: {
+
+            break;
+        }
+        case read_char_sc: {
+
+            break;
+        }
+        case start_tracing_sc: {
+            doTraceOutput = 1;
+            break;
+        }
+        case stop_tracing_sc: {
+            doTraceOutput = 0;
+            break;
+        }
+        default: {
+            printf("Invalid syscall_instr_t\n");
+            exit(EXIT_FAILURE);
+        }
+    }
 
     return 0;
 }

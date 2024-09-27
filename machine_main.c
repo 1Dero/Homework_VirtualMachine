@@ -1,8 +1,5 @@
 // This file with read the command and the .bof file, and call VM functions as appropriate
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "machine.h"
 
 // Global Variables declaration
@@ -43,7 +40,7 @@ int main(int argc, char *argv[]) {
         bf = bof_read_open(argv[1]);
         load_into_memory(bf);
 
-        if(execute_instructions()) return EXIT_FAILURE;
+        execute_instructions();
     }
 
 

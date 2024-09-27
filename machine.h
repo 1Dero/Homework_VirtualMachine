@@ -1,8 +1,12 @@
 #ifndef _MACHINE_H
 #define _MACHINE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "machine_types.h"
 #include "instruction.h"
+#include "regname.h"
 
 // a size for the memory (2 ^ 16 = 32K words)
 #define MEMORY_SIZE_IN_WORDS 32768
@@ -61,6 +65,9 @@ void print_in_assembly();
 
 // Takes an instruction and does what it says
 int execute_instructions();
+
+// Checks the invaraints, returns 1 on halt condition and 0 otherwise.
+int checkInvariants();
 
 // Functions for each instruction:
 int doComputational(comp_instr_t instruct);
