@@ -109,7 +109,6 @@ int checkInvariants() {
 }
 
 void printTraceOutput() {
-    // Darel
     printf("      PC: %d\n", reg.PC);
     for(int i = 0; i < NUM_REGISTERS; i++) {
         printf("GPR[%s]: %-4d \t", regname_get(i), reg.general[i]);
