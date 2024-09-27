@@ -2,12 +2,11 @@
 
 #include "machine.h"
 
-/* 
-Global Variables that can be used in this file:
+/* Global Variables that can be used in this file:
     mem_u mem;
     registers reg;
-    word_type text_words;
-    word_type data_words;
+    word_type;
+    data_words;
 */
 
 void print_in_assembly() {
@@ -22,33 +21,37 @@ void print_in_assembly() {
     printf("    ...\n");
 }
 
+doTraceOutput = 0;
+
 int execute_instructions() {
     for(; reg.PC < text_words; reg.PC++) {
         bin_instr_t instruct = mem.instrs[reg.PC];
         switch(instruction_type(instruct)) {
+            if(doTraceOutput) printTraceOutput();
+
             case comp_instr_type: {
-                // printf("comp_instr_t\n");
+                doComputational(instruct);
                 break;
             }
             case syscall_instr_type: {
-                // printf("syscall_instr_type\n");
+                doSystemCalls(instruct);
                 break;
             }
             case other_comp_instr_type: {
-                // printf("other_comp_instr_type\n");
+                doOtherComputation(instruct);
                 break;
             }
             case immed_instr_type: {
-                // printf("immed_instr_type\n");
+                doImmediate(instruct);
                 break;
             }
             case jump_instr_type: {
-                // printf("jump_instr_type\n");
+                doJump(instruct);
                 break;
             }
             case error_instr_type: {
-                // printf("error_instr_type\n");
-                break;
+                doError(instruct);
+                break
             }
             default: {
                 printf("Not a valid instruction.\n");
@@ -57,4 +60,27 @@ int execute_instructions() {
         }
     return 0;
     }
+}
+
+void printTraceOutput() {
+
+}
+
+int doComputational(comp_instr_t instruct) {
+
+}
+int doSystemCalls(syscall_instr_t instruct) {
+
+}
+int doOtherComputation(other_comp_instr_t instruct) {
+
+}
+int doImmediate(immed_instr_t instruct) {
+
+}
+int doJump(jump_instr_t instruct) {
+
+}
+int doError(error_instr_t instruct) {
+
 }

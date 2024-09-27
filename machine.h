@@ -40,6 +40,11 @@ extern registers reg;
 extern word_type text_words;
 extern word_type data_words;
 
+// Global variable for trace output
+extern int doTraceOutput;
+
+void printTraceOutput();
+
 
 // Loads the bof file's information into memory
 void load_into_memory(BOFFILE bf);
@@ -56,5 +61,13 @@ void print_in_assembly();
 
 // Takes an instruction and does what it says
 int execute_instructions();
+
+// Functions for each instruction:
+int doComputational(comp_instr_t instruct);
+int doSystemCalls(syscall_instr_t instruct);
+int doOtherComputation(other_comp_instr_t instruct);
+int doImmediate(immed_instr_t instruct);
+int doJump(jump_instr_t instruct);
+int doError(error_instr_t instruct);
 
 #endif
