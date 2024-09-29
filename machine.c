@@ -175,8 +175,96 @@ int doOtherComputation(other_comp_instr_t instruct) {
     return 0;
 }
 int doImmediate(immed_instr_t instruct) {
-    // Elijah
+     switch(instruct.op){
+        case 2: {
+            
+           mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]+= machine_types_sgnExt(instruct.immed);
 
+            break;
+        }
+    
+        case 3: {
+            
+           mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] &= machine_types_zeroExt(instruct.immed);
+
+
+            break;
+        }
+        case 4: {
+            
+            mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] |= machine_types_zeroExt(instruct.immed);
+
+
+            break;
+        }
+        case 5: {
+            
+            mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] = ~mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] | machine_types_zeroExt(instruct.immed);
+
+
+            break;
+        }
+        case 6: {
+            
+            mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] ^= machine_types_zeroExt(instruct.immed);
+
+
+            break;
+        }
+        case 7: {
+            if(reg.general[SP]==mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]){
+                reg.PC--;
+                reg.PC+= machine_types_formOffset(instruct.immed);
+            }
+           
+            break;
+        }
+        case 8: {
+            if(mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)] >= 0){
+                reg.PC--;
+                reg.PC+= machine_types_formOffset(instruct.immed);
+            }
+           
+            break;
+        }
+        case 9: {
+            
+            if(mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)] > 0){
+                reg.PC--;
+                reg.PC+= machine_types_formOffset(instruct.immed);
+            }
+
+            break;
+        }
+        case 10: {
+            
+            if(mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)] <= 0){
+                reg.PC--;
+                reg.PC+= machine_types_formOffset(instruct.immed);
+            }
+
+            break;
+        }
+        case 11: {
+            
+            if(mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)] < 0){
+                reg.PC--;
+                reg.PC+= machine_types_formOffset(instruct.immed);
+            }
+
+            break;
+        }
+        case 12: {
+            
+            if(mem.words[reg.general[SP]]!= mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]){
+                reg.PC--;
+                reg.PC+= machine_types_formOffset(instruct.immed);
+            }
+           
+            break;
+        }
+       
+    }
     return 0;
 }
 int doJump(jump_instr_t instruct) {
