@@ -268,6 +268,18 @@ int doImmediate(immed_instr_t instruct) {
     return 0;
 }
 int doJump(jump_instr_t instruct) {
+ switch(instruct.op){
+        case 13:{
+            reg.PC = machine_types_formAddress(reg.PC -1, instruct.addr);
+        }
+        case 14:{
+            reg.general[RA]= reg.PC;
+            reg.PC = machine_types_formAddress(reg.PC -1, instruct.addr);
+        }
+        case 15:{
+            reg.PC = reg.general[RA];
+        }
+    }
 
     return 0;
 }
