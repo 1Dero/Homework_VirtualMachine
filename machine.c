@@ -132,7 +132,56 @@ void printTraceOutput() {
 }
 
 int doComputational(comp_instr_t instruct) {
-    // Ryan
+    switch(instruct.func){
+        case 1:{
+            mem.words[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = mem.words[reg.general[SP]] + (mem.words[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]);
+            break;
+        }
+        case 2:{
+            mem.words[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = mem.words[reg.general[SP]] - (mem.words[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]);
+            break;
+        }
+        case 3:{
+            mem.words[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = mem.words[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)];
+            break;
+        }
+        case 5:{
+            mem.uwords[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = mem.uwords[reg.general[SP]] & (mem.uwords[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]);
+            break;
+        }
+        case 6:{
+            mem.uwords[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = mem.uwords[reg.general[SP]] | (mem.uwords[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]);
+            break;
+        }
+        case 7:{
+            mem.uwords[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = !(mem.uwords[reg.general[SP]] | (mem.uwords[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]));
+            break;
+        }
+        case 8:{
+            mem.uwords[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = mem.uwords[reg.general[SP]] ^ (mem.uwords[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]);
+            break;
+        }
+        case 9:{
+            reg.general[instruct.rt] = mem.words[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)];
+            break;
+        }
+        case 10:{
+            mem.words[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = reg.general[instruct.rs];   
+            break;
+        }
+        case 11:{
+            mem.words[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = (reg.general[instruct.rs] + machine_types_formOffset(instruct.os));
+            break;
+        }
+        case 12:{
+            mem.words[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = mem.words[mem.words[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]];
+            break;
+        }
+        case 13:{
+            mem.words[reg.general[instruct.rt] + machine_types_formOffset(instruct.ot)] = -(mem.words[reg.general[instruct.rs] + machine_types_formOffset(instruct.os)]);
+            break;
+        }
+    }
 
     return 0;
 }
