@@ -253,7 +253,60 @@ int doSystemCalls(syscall_instr_t instruct) {
     return 0;
 }
 int doOtherComputation(other_comp_instr_t instruct) {
-
+    switch(instruct.func){
+		case 1:{
+			mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] = machine_types_sgnExt(instruct.arg);
+			break;
+		}
+		case 2:{
+			reg.general[instruct.reg] = (reg.general[instruct.reg] + machine_types_sgnExt(instruct.arg));
+			break;
+		}
+		case 3:{
+			reg.general[instruct.reg] = (reg.general[instruct.reg] - machine_types_sgnExt(instruct.arg));
+			break;
+		}
+		case 4:{
+			word_type result = (mem.words[reg.general[SP]] * mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)]);
+			reg.HI = result & 0xFFFF0000;
+			reg.LO = result & 0x0000FFFF;
+			break;
+		}
+		case 5:{
+			reg.HI = (mem.words[reg.general[SP]]) % (mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)]);
+			reg.LO = (mem.words[reg.general[SP]]) / (mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)]);
+			break;
+		}
+		case 6:{
+			mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] = reg.HI;
+			break;
+		}
+		case 7:{
+			mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] = reg.LO;
+			break;
+		}
+		case 8:{
+			mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] = (mem.uwords[reg.general[SP]] << (instruct.arg));
+			break;
+		}
+		case 9:{
+			mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] = (mem.uwords[reg.general[SP]] >> (instruct.arg));
+			break;
+		}
+		case 10:{
+			reg.PC = mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)];
+			break;
+		}
+		case 11:{
+			reg.general[RA] = reg.PC;
+			reg.PC = mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)];
+			break;
+		}
+		case 12:{
+			reg.PC = ((reg.PC - 1) + machine_types_formOffset(instruct.arg));
+			break;
+		}
+	}
     return 0;
 }
 int doImmediate(immed_instr_t instruct) {
