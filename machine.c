@@ -115,18 +115,51 @@ void printTraceOutput() {
         if((i+1)%5 == 0) printf("\n");
     }
     printf("\n");
-    for(int i = 0; i <= data_words; i++) {
-        printf("%8u: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
-        if((i+1)%5 == 0) printf("\n");
-    }
-    printf("        ...\n");
-    for(int i = reg.general[SP]; i <= reg.general[FP]; i++) {
-        if(i != reg.general[SP] && mem.words[i] == 0 && mem.words[i-1] == 0) {
-            printf("        ...");
+    int input = 0;
+    for(int i = reg.general[GP]; i < reg.general[SP]; i++) {
+        if(i != reg.general[GP] && i != reg.general[SP] && mem.words[i] == 0 && mem.words[i-1] == 0) {
+            if(input != 0) printf("...\t");
+            else printf("\t...\t");
+            input++;
             while(mem.words[i] == 0) i++;
+            
+            if(input == 5) {
+                printf("\n");
+                input = 0;
+            }
         }
+        
+        if(i >= reg.general[SP]) break;
         printf("%8u: %d\t", i, mem.words[i]);
-        if((i+1)%5 == 0) printf("\n");
+        input++;
+
+        if(input == 5) {
+            printf("\n");
+            input = 0;
+        }
+    }
+    printf("\n");
+    for(int i = reg.general[SP]; i <= reg.general[FP]; i++) {
+        if(i != reg.general[SP] && i != reg.general[FP] && mem.words[i] == 0 && mem.words[i-1] == 0) {
+            if(input != 0) printf("...\t");
+            else printf("\t...\t");
+            input++;
+            while(mem.words[i] == 0 && i != reg.general[FP]) i++;
+            
+            if(input == 5) {
+                printf("\n");
+                input = 0;
+            }
+        }
+        
+
+        printf("%8u: %d\t", i, mem.words[i]);
+        input++;
+
+        if(input == 5) {
+            printf("\n");
+            input = 0;
+        }
     }
     printf("\n\n");
 }
