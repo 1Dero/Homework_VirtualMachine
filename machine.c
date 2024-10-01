@@ -16,11 +16,28 @@ void print_in_assembly() {
         instruction_print(stdout, pc, mem.instrs[pc]);
     }
     
-    for(int i = 0; i <= data_words; i++) {
-        printf("%8u: %d\t", i+reg.general[GP], mem.words[i+reg.general[GP]]);
-        if((i+1)%5 == 0) printf("\n");
+    int char_per_line = 0;
+    int zero_flag = 0;
+    for(int i = reg.general[GP]; i < reg.general[SP]; i++) {
+        if(zero_flag && mem.words[i] == 0) {
+            char_per_line += printf("        ...     ");
+            if(char_per_line > 59) {
+                printf("\n");
+                char_per_line = 0;
+            }
+            while(mem.words[i] == 0) i++;
+            if(i >= reg.general[SP]) break;
+        }
+
+        char_per_line += printf("%8u: %d\t", i, mem.words[i]);
+        if(mem.words[i] == 0) zero_flag = 1;
+        else zero_flag = 0;
+        if(char_per_line > 59) {
+            printf("\n");
+            char_per_line = 0;
+        }
     }
-    printf("        ...\n");
+    printf("\n");
 }
 
 // Default: starts at true
@@ -109,56 +126,58 @@ int checkInvariants() {
 }
 
 void printTraceOutput() {
-    printf("      PC: %d\n", reg.PC);
+    printf("      PC: %d", reg.PC);
+    if(reg.HI != 0 || reg.LO != 0) printf("\tHI: %d\tLO: %d", reg.HI, reg.LO);
+    printf("\n");
     for(int i = 0; i < NUM_REGISTERS; i++) {
         printf("GPR[%s]: %-4d \t", regname_get(i), reg.general[i]);
         if((i+1)%5 == 0) printf("\n");
     }
     printf("\n");
-    int input = 0;
+
+    int char_per_line = 0;
+    int zero_flag = 0;
     for(int i = reg.general[GP]; i < reg.general[SP]; i++) {
-        if(i != reg.general[GP] && i != reg.general[SP] && mem.words[i] == 0 && mem.words[i-1] == 0) {
-            if(input != 0) printf("...\t");
-            else printf("\t...\t");
-            input++;
-            while(mem.words[i] == 0) i++;
-            
-            if(input == 5) {
+        if(zero_flag && mem.words[i] == 0) {
+            char_per_line += printf("        ...     ");
+            if(char_per_line > 59) {
                 printf("\n");
-                input = 0;
+                char_per_line = 0;
             }
+            while(mem.words[i] == 0) i++;
+            if(i >= reg.general[SP]) break;
         }
         
-        if(i >= reg.general[SP]) break;
-        printf("%8u: %d\t", i, mem.words[i]);
-        input++;
-
-        if(input == 5) {
+        
+        char_per_line += printf("%8u: %d\t", i, mem.words[i]);
+        if(mem.words[i] == 0) zero_flag = 1;
+        else zero_flag = 0;
+        
+        if(char_per_line > 59) {
             printf("\n");
-            input = 0;
+            char_per_line = 0;
         }
     }
     printf("\n");
+    char_per_line = 0;
+    zero_flag = 0;
     for(int i = reg.general[SP]; i <= reg.general[FP]; i++) {
-        if(i != reg.general[SP] && i != reg.general[FP] && mem.words[i] == 0 && mem.words[i-1] == 0) {
-            if(input != 0) printf("...\t");
-            else printf("\t...\t");
-            input++;
-            while(mem.words[i] == 0 && i != reg.general[FP]) i++;
-            
-            if(input == 5) {
+        if(zero_flag && mem.words[i] == 0) {
+            char_per_line += printf("        ...     ");
+            if(char_per_line > 59) {
                 printf("\n");
-                input = 0;
+                char_per_line = 0;
             }
+            while(mem.words[i] == 0) i++;
+            if(i > reg.general[FP]) break;
         }
         
-
-        printf("%8u: %d\t", i, mem.words[i]);
-        input++;
-
-        if(input == 5) {
+        char_per_line += printf("%8u: %d\t", i, mem.words[i]);
+        if(mem.words[i] == 0) zero_flag = 1;
+        else zero_flag = 0;
+        if(char_per_line > 59) {
             printf("\n");
-            input = 0;
+            char_per_line = 0;
         }
     }
     printf("\n\n");
@@ -225,11 +244,16 @@ int doSystemCalls(syscall_instr_t instruct) {
             exit(instruct.offset);
         }
         case print_str_sc: {
-            printf("%s", &mem.words[reg.general[instruct.reg]+instruct.offset]);
+            mem.words[reg.general[SP]] = printf("%s", &mem.words[reg.general[instruct.reg]+instruct.offset]);
+            break;
+        }
+        case print_int_sc: {
+            // PINT instruction
+            mem.words[reg.general[SP]] = printf("%d", mem.words[reg.general[instruct.reg]+instruct.offset]);
             break;
         }
         case print_char_sc: {
-            fputc(mem.words[reg.general[instruct.reg]+instruct.offset], stdout);
+            mem.words[reg.general[SP]] = fputc(mem.words[reg.general[instruct.reg]+instruct.offset], stdout);
             break;
         }
         case read_char_sc: {
@@ -406,13 +430,16 @@ int doJump(jump_instr_t instruct) {
  switch(instruct.op){
         case 13:{
             reg.PC = machine_types_formAddress(reg.PC -1, instruct.addr);
+            break;
         }
         case 14:{
             reg.general[RA]= reg.PC;
             reg.PC = machine_types_formAddress(reg.PC -1, instruct.addr);
+            break;
         }
         case 15:{
             reg.PC = reg.general[RA];
+            break;
         }
     }
 
