@@ -241,23 +241,23 @@ int doSystemCalls(syscall_instr_t instruct) {
     switch(instruct.code) {
         case exit_sc: {
             printf("\n");
-            exit(instruct.offset);
+            exit(machine_types_formOffset(instruct.offset));
         }
         case print_str_sc: {
-            mem.words[reg.general[SP]] = printf("%s", &mem.words[reg.general[instruct.reg]+instruct.offset]);
+            mem.words[reg.general[SP]] = printf("%s", &mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]);
             break;
         }
         case print_int_sc: {
             // PINT instruction
-            mem.words[reg.general[SP]] = printf("%d", mem.words[reg.general[instruct.reg]+instruct.offset]);
+            mem.words[reg.general[SP]] = printf("%d", mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]);
             break;
         }
         case print_char_sc: {
-            mem.words[reg.general[SP]] = fputc(mem.words[reg.general[instruct.reg]+instruct.offset], stdout);
+            mem.words[reg.general[SP]] = fputc(mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)], stdout);
             break;
         }
         case read_char_sc: {
-            mem.words[reg.general[instruct.reg]+instruct.offset] = getc(stdin);
+            mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)] = getc(stdin);
             break;
         }
         case start_tracing_sc: {
