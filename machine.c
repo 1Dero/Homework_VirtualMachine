@@ -244,7 +244,7 @@ int doSystemCalls(syscall_instr_t instruct) {
             exit(machine_types_formOffset(instruct.offset));
         }
         case print_str_sc: {
-            mem.words[reg.general[SP]] = printf("%s", &mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]);
+            mem.words[reg.general[SP]] = printf("%s", (char *)&mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]);
             break;
         }
         case print_int_sc: {
