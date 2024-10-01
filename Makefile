@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.58 2024/09/24 20:35:27 leavens Exp leavens $
+# $Id: Makefile,v 1.67 2024/09/30 04:35:23 leavens Exp leavens $
 
 # Add .exe to the end of target to get that suffix in the rules
 VM = vm
@@ -17,7 +17,8 @@ VM_OBJECTS = machine_main.o machine.o \
              regname.o utilities.o
 TESTS = vm_test0.bof vm_test1.bof vm_test2.bof vm_test3.bof \
 	vm_test4.bof vm_test5.bof vm_test6.bof vm_test7.bof \
-	vm_test8.bof vm_test9.bof vm_testA.bof vm_testB.bof
+	vm_test8.bof vm_test9.bof vm_testA.bof vm_testB.bof \
+	vm_testC.bof vm_testD.bof
 TESTSOURCES = $(TESTS:.bof=.asm)
 EXPECTEDOUTPUTS = $(TESTS:.bof=.out)
 EXPECTEDLISTINGS = $(TESTS:.bof=.lst)
@@ -77,7 +78,7 @@ check-lst-outputs check-asm-outputs:
 	for f in `echo $(TESTS) | sed -e 's/\\.bof//g'`; \
 	do \
 		echo listing "$$f.bof" using ./vm -p ...; \
-		./vm -p "$$f.bof" > "$$f.myp" 2>&1; \
+		./$(VM) -p "$$f.bof" > "$$f.myp" 2>&1; \
 		diff -w -B "$$f.lst" "$$f.myp" && echo 'passed!' \
 			|| { echo 'failed!'; DIFFS=1; }; \
 	done; \
@@ -124,7 +125,7 @@ LEXER = lexer
 
 .DEFAULT: $(VM)
 
-$(ASM)_lexer.c: $(ASM)_lexer.l
+$(ASM)_lexer.c: $(ASM)_lexer.l $(ASM).tab.h
 	$(LEX) $(LEXFLAGS) $<
 
 $(ASM)_lexer.o: $(ASM)_lexer.c ast.h $(ASM).tab.h utilities.h char_utilities.h file_location.h
@@ -133,7 +134,10 @@ $(ASM)_lexer.o: $(ASM)_lexer.c ast.h $(ASM).tab.h utilities.h char_utilities.h f
 $(ASM).tab.o: $(ASM).tab.c $(ASM).tab.h
 	$(CC) $(CFLAGS) -Wno-unused-const-variable -c $<
 
+instruction.o: $(ASM).tab.h
+
 $(ASM).tab.c $(ASM).tab.h: $(ASM).y ast.h parser_types.h machine_types.h 
+	$(RM) $(ASM).tab.h $(ASM).tab.c
 	$(YACC) $(YACCFLAGS) $(ASM).y
 
 lexer.o: lexer.c lexer.h $(ASM).tab.h
@@ -144,7 +148,9 @@ $(LEXER) : $(LEXER)_main.o $(LEXER).o $(ASM)_lexer.o ast.o $(ASM).tab.o file_loc
 
 $(ASM)_main.o: $(ASM)_main.c $(ASM).tab.h ast.h parser_types.h machine_types.h
 
-$(ASM): $(ASM)_main.o $(ASM).tab.o $(ASM)_lexer.o $(ASM)_unparser.o ast.o bof.o file_location.o lexer.o pass1.o assemble.o instruction.o machine_types.o regname.o symtab.o utilities.o char_utilities.o
+ASM_OBJECTS = $(ASM)_main.o $(ASM).tab.o $(ASM)_lexer.o $(ASM)_unparser.o ast.o bof.o file_location.o lexer.o pass1.o assemble.o instruction.o machine_types.o regname.o symtab.o utilities.o char_utilities.o
+
+$(ASM): $(ASM).tab.h $(ASM_OBJECTS) 
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(DISASM): disasm_main.o disasm.o instruction.o bof.o machine_types.o regname.o utilities.o
@@ -154,7 +160,7 @@ $(BOF_BIN_DUMP): bof_bin_dump.o bof.o utilities.o
 	$(CC) $(CFLAGS) -o $(BOF_BIN_DUMP) $^
 
 .PHONY: all
-all: asm.tab.h vm asm disasm bof_bin_dump
+all: $(ASM).tab.h vm asm disasm bof_bin_dump
 
 .PRECIOUS: %.out %.lst
 %.out: %.bof $(VM)
@@ -174,7 +180,8 @@ all: asm.tab.h vm asm disasm bof_bin_dump
 		echo 'as using this target ($@) will invalidate a test'; \
 		exit 1; \
 	fi
-	./$(VM) -p $< > $@ 2>&1
+	rm -f $@
+	- ./$(VM) -p $< > $@ 2>&1
 
 .PHONY: create-outputs
 create-outputs: $(VM) $(ASM) $(TESTS)
@@ -242,9 +249,9 @@ bof-clean:
 	$(RM) *.bof
 
 ZIPFILE = hw1-tests.zip
-TESTSZIPFILE = ~/temp/$(ZIPFILE)
+TESTSZIPFILE = ../$(ZIPFILE)
 PROVIDEDFILES = Makefile asm_main.c asm.y asm_lexer.l \
-		asm_lexer.c asm.tab.h parser_types.h \
+		asm_lexer.c asm.tab.[ch] parser_types.h \
 		asm_unparser.[ch] ast.[ch] bof.[ch] machine_types.[ch] \
 		utilities.[ch] file_location.[ch] lexer.[ch] \
 		pass1.[ch] assemble.[ch] instruction.[ch] regname.[ch] \
@@ -269,6 +276,7 @@ $(TESTSZIPFILE): $(PDFFILES) Makefile $(TESTS) $(PROVIDEDFILES) $(VM) create-vm-
 	$(CHMOD) u+rw Makefile $(TESTS) $(PROVIDEDFILES) *.[ch]
 
 %.bof: %.$(ASM)
+	$(RM) -f $@
 	./$(ASM) $<
 
 .PHONY: check-separately
@@ -276,8 +284,8 @@ check-separately:
 	$(CC) $(CFLAGS) -c *.c
 
 .PHONY: hw1-solution.zip
-hw1-solution.zip ~/temp/hw1-solution.zip: Makefile $(TESTS) $(PROVIDEDFILES) \
-			*.pl0 *.lst 
+hw1-solution.zip ~/temp/hw1-solution.zip: Makefile $(ASM) $(TESTS) \
+	$(PROVIDEDFILES) *.out *.lst 
 	$(MAKE) clean
 	$(ZIP) ~/temp/hw4-solution.zip $^
 
