@@ -155,7 +155,7 @@ extern void instruction_print_table_heading(FILE *out);
 extern void instruction_print(FILE *out, address_type addr, bin_instr_t instr);
 
 // Return the mnemonic for the given system call code
-extern const char *instruction_syscall_mnemonic(unsigned int code);
+extern const char *instruction_syscall_mnemonic(syscall_type code);
 
 // Requires: instr is a SYSCALL instruction
 // (i.e., instr.syscall.op == OTHC_O and instr.syscall.func == SYS_F).
