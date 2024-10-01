@@ -371,9 +371,8 @@ int doImmediate(immed_instr_t instruct) {
             break;
         }
         case 7: {
-            if(reg.general[SP]==mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]){
-                reg.PC--;
-                reg.PC+= machine_types_formOffset(instruct.immed);
+            if(mem.words[reg.general[SP]]==mem.words[reg.general[instruct.reg]+machine_types_formOffset(instruct.offset)]){
+                reg.PC = (reg.PC-1 + machine_types_formOffset(instruct.immed));
             }
            
             break;
