@@ -291,9 +291,9 @@ int doOtherComputation(other_comp_instr_t instruct) {
 			break;
 		}
 		case 4:{
-			word_type result = (mem.words[reg.general[SP]] * mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)]);
-			reg.HI = result & 0xFFFF0000;
-			reg.LO = result & 0x0000FFFF;
+			long long result = (mem.words[reg.general[SP]] * mem.words[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)]);
+			reg.HI = result >> 32;
+			reg.LO = result & & 4294967295;
 			break;
 		}
 		case 5:{
