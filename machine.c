@@ -127,7 +127,7 @@ int checkInvariants() {
 
 void printTraceOutput() {
     printf("      PC: %d", reg.PC);
-    if(reg.HI != 0 || reg.LO != 0) printf("\tHI: %d\tLO: %d", reg.HI, reg.LO);
+    if(reg.HI != 0 || reg.LO != 0) printf("\t      HI: %d\t      LO: %d", reg.HI, reg.LO);
     printf("\n");
     for(int i = 0; i < NUM_REGISTERS; i++) {
         printf("GPR[%s]: %-4d \t", regname_get(i), reg.general[i]);
