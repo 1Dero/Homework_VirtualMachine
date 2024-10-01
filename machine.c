@@ -73,7 +73,7 @@ int execute_instructions() {
                 break;
             }
             case immed_instr_type: {
-                doImmediate(instruct.immed);
+                doImmediate(instruct.immed, instruct.uimmed);
                 break;
             }
             case jump_instr_type: {
@@ -333,7 +333,7 @@ int doOtherComputation(other_comp_instr_t instruct) {
 	}
     return 0;
 }
-int doImmediate(immed_instr_t instruct) {
+int doImmediate(immed_instr_t instruct, uimmed_instr_t instr) {
      switch(instruct.op){
         case 2: {
             
@@ -351,7 +351,7 @@ int doImmediate(immed_instr_t instruct) {
         }
         case 4: {
             
-            mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] |= machine_types_zeroExt(instruct.immed);
+            mem.uwords[reg.general[instr.reg] + machine_types_formOffset(instr.offset)] |= machine_types_zeroExt(instr.uimmed);
 
 
             break;
@@ -365,7 +365,7 @@ int doImmediate(immed_instr_t instruct) {
         }
         case 6: {
             
-            mem.uwords[reg.general[instruct.reg] + machine_types_formOffset(instruct.offset)] ^= machine_types_zeroExt(instruct.immed);
+            mem.uwords[reg.general[instr.reg] + machine_types_formOffset(instr.offset)] ^= machine_types_zeroExt(instr.uimmed);
 
 
             break;
